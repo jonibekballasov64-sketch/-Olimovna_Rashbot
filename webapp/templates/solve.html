@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <title>Test ishlash</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
 body { font-family: Arial; padding:20px; background:#f5f5f5; }
 .q { background:white; padding:10px; margin:10px 0; border-radius:10px; }
-button { padding:8px 15px; border:none; border-radius:6px; cursor:pointer; }
+button { padding:10px 18px; border:none; border-radius:8px; cursor:pointer; background:#2b7cff; color:white; }
 </style>
 </head>
 
@@ -15,91 +17,68 @@ button { padding:8px 15px; border:none; border-radius:6px; cursor:pointer; }
 
 <h2>Test ishlash</h2>
 
-<div class="q">
-🔑 Test kodi:
-<input type="text" id="code">
-<button onclick="loadTest()">Yuklash</button>
-</div>
-
 <div id="form"></div>
 
-<button onclick="submitTest()">📤 Yuborish</button>
+<button onclick="submitTest()">📤 Javob yuborish</button>
 
 <script>
 let f = document.getElementById("form");
-let TEST = null;
 
 // =====================
-// TESTNI YUKLASH
+// FORMA CHIZISH
 // =====================
-function loadTest(){
-  let code = document.getElementById("code").value;
 
-  fetch("/get_test?code="+code)
-  .then(r=>r.json())
-  .then(data=>{
-    TEST = data;
-    drawForm();
-  });
-}
-
-// =====================
-// FORMANI CHIZISH
-// =====================
-function drawForm(){
-  f.innerHTML = "";
-
-  // 1–32
-  for(let i=1;i<=32;i++){
-    f.innerHTML += `
-    <div class="q">
-    ${i}:
-    A<input type="radio" name="q${i}" value="A">
-    B<input type="radio" name="q${i}" value="B">
-    C<input type="radio" name="q${i}" value="C">
-    D<input type="radio" name="q${i}" value="D">
-    </div>`;
-  }
-
-  // 33–35
-  for(let i=33;i<=35;i++){
-    f.innerHTML += `
-    <div class="q">
-    ${i}:
-    A<input type="radio" name="q${i}" value="A">
-    B<input type="radio" name="q${i}" value="B">
-    C<input type="radio" name="q${i}" value="C">
-    D<input type="radio" name="q${i}" value="D">
-    E<input type="radio" name="q${i}" value="E">
-    F<input type="radio" name="q${i}" value="F">
-    </div>`;
-  }
-
-  // 36–39
-  for(let i=36;i<=39;i++){
-    f.innerHTML += `
-    <div class="q">
-    ${i}: <input id="q${i}">
-    </div>`;
-  }
-
-  // 40–44
-  for(let i=40;i<=44;i++){
-    f.innerHTML += `
-    <div class="q">
-    ${i}:
-    A) <input id="q${i}a">
-    B) <input id="q${i}b">
-    </div>`;
-  }
-
-  // 45 esse
+// 1–32
+for(let i=1;i<=32;i++){
   f.innerHTML += `
   <div class="q">
-  45 (esse 0–75):
-  <input type="number" id="q45" min="0" max="75">
+  ${i}:
+  A<input type="radio" name="q${i}" value="A">
+  B<input type="radio" name="q${i}" value="B">
+  C<input type="radio" name="q${i}" value="C">
+  D<input type="radio" name="q${i}" value="D">
   </div>`;
 }
+
+// 33–35
+for(let i=33;i<=35;i++){
+  f.innerHTML += `
+  <div class="q">
+  ${i}:
+  A<input type="radio" name="q${i}" value="A">
+  B<input type="radio" name="q${i}" value="B">
+  C<input type="radio" name="q${i}" value="C">
+  D<input type="radio" name="q${i}" value="D">
+  E<input type="radio" name="q${i}" value="E">
+  F<input type="radio" name="q${i}" value="F">
+  </div>`;
+}
+
+// 36–39
+for(let i=36;i<=39;i++){
+  f.innerHTML += `
+  <div class="q">
+  ${i}: <input id="q${i}">
+  </div>`;
+}
+
+// 40–44
+for(let i=40;i<=44;i++){
+  f.innerHTML += `
+  <div class="q">
+  ${i}:
+  A) <input id="q${i}a">
+  B) <input id="q${i}b">
+  </div>`;
+}
+
+// 45 esse
+f.innerHTML += `
+<div class="q">
+45 (esse 0–75):
+<input type="number" id="q45" min="0" max="75">
+</div>`;
+
 
 // =====================
 // YUBORISH
@@ -123,17 +102,20 @@ function submitTest(){
     }
   }
 
-  data["q45"] = Number(document.getElementById("q45").value || 0);
+  let esse = Number(document.getElementById("q45").value || 0);
 
-  fetch("/submit_answers", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(data)
-  })
-  .then(r=>r.json())
-  .then(res=>{
-    alert(res.text);
-  });
+  // 🔥 HOZIRCHA NATIJA (keyin real tekshiruv qilamiz)
+  let result = {
+    correct: 30,
+    wrong: 14,
+    esse: esse
+  };
+
+  // 🔥 ENG MUHIM
+  Telegram.WebApp.sendData(JSON.stringify(result));
+
+  // 🔥 YOPADI
+  Telegram.WebApp.close();
 }
 </script>
 
