@@ -1,15 +1,16 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
-from bot.config import ADMIN_ID
 
 # 🔗 WebApp linklar
 WEBAPP_SOLVE = "https://olimovnarashbot-production.up.railway.app/solve"
 WEBAPP_CREATE = "https://olimovnarashbot-production.up.railway.app/create"
 
+# 🔥 ADMIN ID NI QO‘LDA YOZAMIZ (ENV bilan ovora bo‘lmaymiz)
+ADMIN_ID = 1981059344
 
-def menu_keyboard(user_id=None):
+
+def menu_keyboard(user_id: int):
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
 
-    # 📤 Javob yuborish → WebApp
     kb.row(
         KeyboardButton(
             text="📤 Javob yuborish",
@@ -18,14 +19,13 @@ def menu_keyboard(user_id=None):
         KeyboardButton("📊 Mening natijalarim")
     )
 
-    # 👤 Profil / ℹ️ haqida
     kb.row(
         KeyboardButton("👤 Profil"),
         KeyboardButton("ℹ️ Bot haqida")
     )
 
-    # 🔥 ADMIN TEKSHIRUV (100% ishlaydi)
-    if str(user_id) == str(ADMIN_ID):
+    # 🔥 ADMIN
+    if user_id == ADMIN_ID:
         kb.row(
             KeyboardButton(
                 text="✏️ Test yaratish",
