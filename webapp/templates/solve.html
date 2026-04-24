@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>Test ishlash</title>
+
+<style>
+body { font-family: Arial; padding:20px; background:#f5f5f5; }
+.q { background:white; padding:10px; margin:10px 0; border-radius:10px; }
+button { padding:8px 15px; border:none; border-radius:6px; cursor:pointer; }
+</style>
+</head>
+
+<body>
+
+<h2>Test ishlash</h2>
+
+<div class="q">
+🔑 Test kodi:
+<input type="text" id="code">
+<button onclick="loadTest()">Yuklash</button>
+</div>
+
+<div id="form"></div>
+
+<button onclick="submitTest()">📤 Yuborish</button>
+
+<script>
+let f = document.getElementById("form");
+let TEST = null;
+
+// =====================
+// TESTNI YUKLASH
+// =====================
+function loadTest(){
+  let code = document.getElementById("code").value;
+
+  fetch("/get_test?code="+code)
+  .then(r=>r.json())
+  .then(data=>{
+    TEST = data;
+    drawForm();
+  });
+}
+
+// =====================
+// FORMANI CHIZISH
+// =====================
+function drawForm(){
+  f.innerHTML = "";
+
+  // 1–32
+  for(let i=1;i<=32;i++){
+    f.innerHTML += `
+    <div class="q">
+    ${i}:
+    A<input type="radio" name="q${i}" value="A">
+    B<input type="radio" name="q${i}" value="B">
+    C<input type="radio" name="q${i}" value="C">
+    D<input type="radio" name="q${i}" value="D">
+    </div>`;
+  }
+
+  // 33–35
+  for(let i=33;i<=35;i++){
+    f.innerHTML += `
+    <div class="q">
+    ${i}:
+    A<input type="radio" name="q${i}" value="A">
+    B<input type="radio" name="q${i}" value="B">
+    C<input type="radio" name="q${i}" value="C">
+    D<input type="radio" name="q${i}" value="D">
+    E<input type="radio" name="q${i}" value="E">
+    F<input type="radio" name="q${i}" value="F">
+    </div>`;
+  }
+
+  // 36–39
+  for(let i=36;i<=39;i++){
+    f.innerHTML += `
+    <div class="q">
+    ${i}: <input id="q${i}">
+    </div>`;
+  }
+
+  // 40–44
+  for(let i=40;i<=44;i++){
+    f.innerHTML += `
+    <div class="q">
+    ${i}:
+    A) <input id="q${i}a">
+    B) <input id="q${i}b">
+    </div>`;
+  }
+
+  // 45 esse
+  f.innerHTML += `
+  <div class="q">
+  45 (esse 0–75):
+  <input type="number" id="q45" min="0" max="75">
+  </div>`;
+}
+
+// =====================
+// YUBORISH
+// =====================
+function submitTest(){
+  let data = {};
+
+  for(let i=1;i<=35;i++){
+    let v = document.querySelector(`input[name=q${i}]:checked`);
+    data["q"+i] = v ? v.value : "";
+  }
+
+  for(let i=36;i<=39;i++){
+    data["q"+i] = document.getElementById("q"+i).value;
+  }
+
+  for(let i=40;i<=44;i++){
+    data["q"+i] = {
+      a: document.getElementById("q"+i+"a").value,
+      b: document.getElementById("q"+i+"b").value
+    }
+  }
+
+  data["q45"] = Number(document.getElementById("q45").value || 0);
+
+  fetch("/submit_answers", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    alert(res.text);
+  });
+}
+</script>
+
+</body>
+</html>
