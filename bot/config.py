@@ -1,16 +1,16 @@
-import os
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-# Bot token
+# BOT TOKEN (.env dan olinadi)
 TOKEN = os.getenv("BOT_TOKEN")
 
-# Admin ID
+# ADMIN ID
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
-# Majburiy kanallar
+# MAJBURIY KANALLAR
 CHANNELS = [
-    "@NargizaOlimovna_Onatili",
-    "@Attestatsiya_NargizaOlimovna"
+    "@Attestatsiya_NargizaOlimovna",
+    "@NargizaOlimovna_Onatili"
 ]
