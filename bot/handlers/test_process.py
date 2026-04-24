@@ -41,14 +41,14 @@ async def result_handler(message: types.Message):
 
     correct_answers = TESTS[code]
 
-    # 🔥 1. TEKSHIRUV
-    responses, correct, wrong = check_all(answers, correct_answers)
+    # 🔥 TEKSHIRUV (TO‘G‘RI FUNKSIYA)
+    responses, correct, wrong_count, wrong_list = check_all(answers, correct_answers)
 
-    # 🔥 2. RASCH
+    # 🔥 RASCH
     theta = estimate_theta(responses)
     test_ball = theta_to_test_ball(theta)
 
-    # 🔥 3. YAKUNIY
+    # 🔥 YAKUNIY
     final = round((test_ball + esse) / 2, 1)
 
     if final >= 70: grade = "A+"
@@ -59,17 +59,20 @@ async def result_handler(message: types.Message):
     elif final >= 46: grade = "C"
     else: grade = "Fail"
 
+    # 🔥 SAQLASH (MUHIM)
     RESULTS.append({
+        "user_id": message.from_user.id,
         "name": message.from_user.full_name,
         "correct": correct,
-        "wrong": wrong,
+        "wrong": wrong_count,
+        "wrong_list": wrong_list,
         "esse": esse,
         "test_ball": test_ball,
         "final": final,
         "grade": grade
     })
 
-    # 🔹 O‘QUVCHI
+    # 🔹 O‘QUVCHI (hozir qisqa)
     await message.answer(
         f"""✅ Javoblaringiz qabul qilindi!
 
