@@ -1,6 +1,8 @@
 from aiogram import types
 from main import bot, dp
 from bot.config import CHANNELS
+from bot.keyboards.inline import sub_keyboard
+from bot.keyboards.reply import menu_keyboard
 
 
 async def check_sub(user_id):
@@ -17,6 +19,9 @@ async def check_sub(user_id):
 @dp.callback_query_handler(lambda c: c.data == "check_sub")
 async def check_sub_callback(callback: types.CallbackQuery):
     if await check_sub(callback.from_user.id):
-        await callback.message.answer("✅ Obuna tasdiqlandi!")
+        await callback.message.answer(
+            "✅ Obuna tasdiqlandi!",
+            reply_markup=menu_keyboard()
+        )
     else:
         await callback.answer("❌ Hali obuna bo‘lmagansiz", show_alert=True)
