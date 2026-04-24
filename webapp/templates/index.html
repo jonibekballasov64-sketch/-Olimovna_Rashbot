@@ -1,49 +1,165 @@
-import json
-from aiogram import types
-from main import dp
-from bot.config import ADMIN_ID
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>Test yaratish</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body { font-family: Arial; padding:20px; background:#eef2f7; }
+h2 { text-align:center; }
+.q { background:white; padding:12px; margin:10px 0; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+.row { margin-top:6px; }
+label { margin-right:10px; cursor:pointer; }
+input[type="text"], input[type="number"] { padding:6px; border-radius:6px; border:1px solid #ccc; }
+button { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; margin-top:5px; }
+.add { background:#2ecc71; color:white; }
+.remove { background:#e74c3c; color:white; }
+.submit { background:#2b7cff; color:white; width:100%; padding:10px; font-size:16px; }
+</style>
+</head>
+<body>
 
-# vaqtinchalik
-TESTS = {}
+<h2>✏️ Test yaratish</h2>
+<div id="form"></div>
 
-WEBAPP_CREATE = "https://YOUR-APP.up.railway.app/create"
+<div class="q">
+<b>45-savol (esse 0–75):</b><br>
+<input type="number" id="q45" min="0" max="75">
+</div>
 
+<button class="submit" onclick="submitTest()">✅ Test yaratish</button>
 
-# 🔹 tugma
-@dp.message_handler(text="✏️ Test yaratish")
-async def create_test(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
-        return
+<script>
+let f = document.getElementById("form");
 
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add(types.KeyboardButton(
-        text="📝 Test yaratish",
-        web_app=types.WebAppInfo(url=WEBAPP_CREATE)
-    ))
+// 1–32
+for(let i=1;i<=32;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol</b>
+  <div class="row">
+    <label><input type="radio" name="q${i}" value="A"> A</label>
+    <label><input type="radio" name="q${i}" value="B"> B</label>
+    <label><input type="radio" name="q${i}" value="C"> C</label>
+    <label><input type="radio" name="q${i}" value="D"> D</label>
+  </div>
+  </div>`;
+}
 
-    await message.answer("Test yaratish uchun bosing 👇", reply_markup=kb)
+// 33–35
+for(let i=33;i<=35;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol</b>
+  <div class="row">
+    A<input type="radio" name="q${i}" value="A">
+    B<input type="radio" name="q${i}" value="B">
+    C<input type="radio" name="q${i}" value="C">
+    D<input type="radio" name="q${i}" value="D">
+    E<input type="radio" name="q${i}" value="E">
+    F<input type="radio" name="q${i}" value="F">
+  </div>
+  </div>`;
+}
 
+// 36–39
+for(let i=36;i<=39;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol</b><br>
+  <input id="q${i}" placeholder="To‘g‘ri javob">
+  </div>`;
+}
 
-# 🔹 webapp data
-@dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
-async def create_handler(message: types.Message):
+// 40–44 (A/B + -)
+for(let i=40;i<=44;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol</b>
 
-    if message.from_user.id != ADMIN_ID:
-        return
+  <div>A:</div>
+  <div id="q${i}a_box"></div>
+  <button class="add" onclick="addField('${i}a')">+ qo‘shish</button>
 
-    data = json.loads(message.web_app_data.data)
+  <div style="margin-top:8px;">B:</div>
+  <div id="q${i}b_box"></div>
+  <button class="add" onclick="addField('${i}b')">+ qo‘shish</button>
 
-    code = data.get("code")
-    test = data.get("test")
+  </div>`;
+  addField(i+"a");
+  addField(i+"b");
+}
 
-    TESTS[code] = test
+function addField(id){
+  let box = document.getElementById("q"+id+"_box");
+  let div = document.createElement("div");
+  div.innerHTML = `
+    <input type="text" placeholder="javob">
+    <button class="remove" onclick="this.parentElement.remove()">-</button>
+  `;
+  box.appendChild(div);
+}
 
-    text = f"""Assalomu alaykum. Berilgan testni ishlang.
+function submitTest(){
 
-🔑 Test kodi: {code}
+  let test = {};
 
-👉 @Olimovna_Rashbot orqali ishlang
-📝 45-savol esse o‘quvchi tomonidan kiritiladi"""
+  // 1–35 (majburiy)
+  for(let i=1;i<=35;i++){
+    let v = document.querySelector(`input[name=q${i}]:checked`);
+    if(!v){
+      alert(i + "-savol belgilanmagan");
+      return;
+    }
+    test["q"+i] = v.value;
+  }
 
-    await message.answer("✅ Test yaratildi!")
-    await message.answer(text)
+  // 36–39 (majburiy)
+  for(let i=36;i<=39;i++){
+    let val = document.getElementById("q"+i).value.trim();
+    if(!val){
+      alert(i + "-savol bo‘sh");
+      return;
+    }
+    test["q"+i] = val;
+  }
+
+  // 40–44 (A va B kamida 1 tadan)
+  for(let i=40;i<=44;i++){
+    let a = [];
+    let b = [];
+
+    document.querySelectorAll(`#q${i}a_box input`).forEach(x=>{
+      if(x.value.trim()) a.push(x.value.trim());
+    });
+    document.querySelectorAll(`#q${i}b_box input`).forEach(x=>{
+      if(x.value.trim()) b.push(x.value.trim());
+    });
+
+    if(a.length === 0 || b.length === 0){
+      alert(i + "-savolda A va B to‘ldirilmagan");
+      return;
+    }
+
+    test["q"+i] = {a:a, b:b};
+  }
+
+  // esse
+  let esse = Number(document.getElementById("q45").value || 0);
+  if(esse < 0 || esse > 75){
+    alert("Esse 0–75 oralig‘ida bo‘lsin");
+    return;
+  }
+  test["q45"] = esse;
+
+  // 🔥 BOTGA YUBORISH (ANIQ FORMAT)
+  Telegram.WebApp.sendData(JSON.stringify({
+    test: test
+  }));
+
+  Telegram.WebApp.close();
+}
+</script>
+
+</body>
+</html>
