@@ -1,11 +1,13 @@
 from aiogram import Bot, Dispatcher, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from bot.config import TOKEN
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
 
-# HANDLERLARNI ULAYMIZ
-from bot.handlers import start, subscription, menu
+storage = MemoryStorage()   # 🔥 SHU QO‘SHILDI
+dp = Dispatcher(bot, storage=storage)
+
+from bot.handlers import start, subscription, menu, test_create  # 🔥 create ham qo‘shildi
 
 if __name__ == "__main__":
     print("Bot ishga tushdi...")
