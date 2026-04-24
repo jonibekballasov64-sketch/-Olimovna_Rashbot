@@ -5,6 +5,7 @@ from bot.keyboards.inline import sub_keyboard
 from bot.keyboards.reply import menu_keyboard
 
 
+# 🔥 OBUNA TEKSHIRUV
 async def check_sub(user_id):
     for channel in CHANNELS:
         try:
@@ -16,12 +17,17 @@ async def check_sub(user_id):
     return True
 
 
+# 🔥 "A'zo bo‘ldim" BOSILGANDA
 @dp.callback_query_handler(lambda c: c.data == "check_sub")
 async def check_sub_callback(callback: types.CallbackQuery):
+
     if await check_sub(callback.from_user.id):
         await callback.message.answer(
             "✅ Obuna tasdiqlandi!",
-            reply_markup=menu_keyboard()
+            reply_markup=menu_keyboard(callback.from_user.id)  # 🔥 MUHIM
         )
     else:
         await callback.answer("❌ Hali obuna bo‘lmagansiz", show_alert=True)
+        return
+
+    await callback.answer()  # 🔥 MUHIM
