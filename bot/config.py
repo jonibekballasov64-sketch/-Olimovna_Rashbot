@@ -9,5 +9,7 @@ TOKEN = os.getenv("BOT_TOKEN")
 # ADMIN ID
 ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
 
-# MAJBURIY KANALLAR (.env dan olinadi)
-CHANNELS = os.getenv("CHANNELS", "").split(",")
+# 🔥 KANALLAR (TO‘G‘RI PARSING)
+raw_channels = os.getenv("CHANNELS", "")
+
+CHANNELS = [ch.strip() for ch in raw_channels.split(",") if ch.strip()]
