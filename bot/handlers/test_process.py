@@ -3,61 +3,91 @@ from aiogram import types
 from main import dp
 from bot.config import ADMIN_ID
 
-# 🔹 WEBAPP LINK (o'zingiznikiga almashtirasiz)
+from bot.handlers.test_create import TESTS
+from bot.utils.checker import check_all
+from bot.utils.rash import estimate_theta, theta_to_test_ball
+
+RESULTS = []
+
 WEBAPP_SOLVE = "https://YOUR-APP.up.railway.app/solve"
 
 
-# 🔥 1. O‘QUVCHI "Javob yuborish" BOSADI → WEBAPP OCHILADI
 @dp.message_handler(text="📤 Javob yuborish")
 async def solve_test(message: types.Message):
-
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-
-    kb.add(
-        types.KeyboardButton(
-            text="✍️ Test ishlash",
-            web_app=types.WebAppInfo(url=WEBAPP_SOLVE)
-        )
-    )
-
-    await message.answer("Testni ishlash uchun bosing 👇", reply_markup=kb)
+    kb.add(types.KeyboardButton(
+        text="✍️ Test ishlash",
+        web_app=types.WebAppInfo(url=WEBAPP_SOLVE)
+    ))
+    await message.answer("👇 Testni boshlash", reply_markup=kb)
 
 
-# 🔥 2. WEBAPP DAN NATIJA KELADI
 @dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
 async def result_handler(message: types.Message):
 
     try:
         data = json.loads(message.web_app_data.data)
     except:
-        await message.answer("❌ Xatolik yuz berdi")
+        await message.answer("❌ Xatolik")
         return
 
-    correct = data.get("correct", 0)
-    wrong = data.get("wrong", 0)
-    esse = data.get("esse", 0)
+    code = data.get("code")
+    answers = data.get("answers", {})
+    esse = int(data.get("esse", 0))
 
-    # 🔹 O‘QUVCHIGA XABAR
+    if code not in TESTS:
+        await message.answer("❌ Test kodi noto‘g‘ri")
+        return
+
+    correct_answers = TESTS[code]
+
+    # 🔥 1. TEKSHIRUV
+    responses, correct, wrong = check_all(answers, correct_answers)
+
+    # 🔥 2. RASCH
+    theta = estimate_theta(responses)
+    test_ball = theta_to_test_ball(theta)
+
+    # 🔥 3. YAKUNIY
+    final = round((test_ball + esse) / 2, 1)
+
+    if final >= 70: grade = "A+"
+    elif final >= 65: grade = "A"
+    elif final >= 60: grade = "B+"
+    elif final >= 55: grade = "B"
+    elif final >= 50: grade = "C+"
+    elif final >= 46: grade = "C"
+    else: grade = "Fail"
+
+    RESULTS.append({
+        "name": message.from_user.full_name,
+        "correct": correct,
+        "wrong": wrong,
+        "esse": esse,
+        "test_ball": test_ball,
+        "final": final,
+        "grade": grade
+    })
+
+    # 🔹 O‘QUVCHI
     await message.answer(
         f"""✅ Javoblaringiz qabul qilindi!
 
 📊 Siz 44 savoldan {correct} tasini to‘g‘ri ishladingiz
-❌ Xatolar soni: {wrong}
 📝 Esse bali: {esse}
 
 📢 Yakuniy natijalar test yakunlangach e’lon qilinadi"""
     )
 
-    # 🔹 ADMINGA XABAR (sizga keladi)
+    # 🔹 ADMIN
     await message.bot.send_message(
         ADMIN_ID,
         f"""✅ Testga javoblar qabul qilindi!
-👤 Test topshiruvchi: {message.from_user.full_name}
+👤 {message.from_user.full_name}
 
-📊 To‘g‘ri: {correct}
-❌ Xato: {wrong}
+📊 To‘g‘ri: {correct} / 44
 📝 Esse: {esse}
 
-Natijalarni ko‘rish: /natijalar
-Testni yakunlash: /yakunlash"""
+👉 /natijalar
+👉 /yakunlash"""
     )
