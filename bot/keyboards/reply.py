@@ -1,7 +1,8 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from bot.config import ADMIN_ID
 
 
-def menu_keyboard():
+def menu_keyboard(user_id=None):
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
 
     kb.row(
@@ -12,5 +13,11 @@ def menu_keyboard():
         KeyboardButton("👤 Profil"),
         KeyboardButton("ℹ️ Bot haqida")
     )
+
+    # 🔥 ADMIN BO‘LSA QO‘SHILADI
+    if user_id == ADMIN_ID:
+        kb.row(
+            KeyboardButton("✏️ Test yaratish")
+        )
 
     return kb
