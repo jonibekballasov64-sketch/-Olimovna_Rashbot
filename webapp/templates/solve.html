@@ -10,6 +10,7 @@
 body { font-family: Arial; padding:20px; background:#f5f5f5; }
 .q { background:white; padding:10px; margin:10px 0; border-radius:10px; }
 button { padding:10px 18px; border:none; border-radius:8px; cursor:pointer; background:#2b7cff; color:white; }
+input { margin:5px; }
 </style>
 </head>
 
@@ -17,10 +18,9 @@ button { padding:10px 18px; border:none; border-radius:8px; cursor:pointer; back
 
 <h2>Test ishlash</h2>
 
-<!-- 🔑 TEST KOD -->
 <div class="q">
 🔑 Test kodi:
-<input type="text" id="code">
+<input type="text" id="code" placeholder="Masalan: A1B2C3">
 </div>
 
 <div id="form"></div>
@@ -81,44 +81,67 @@ f.innerHTML += `
 <input type="number" id="q45" min="0" max="75">
 </div>`;
 
-
 // =====================
 // YUBORISH
 // =====================
 function submitTest(){
+
+  let code = document.getElementById("code").value.trim();
+
+  if(!code){
+    alert("❌ Test kodini kiriting!");
+    return;
+  }
+
   let data = {};
 
   // 1–35
   for(let i=1;i<=35;i++){
     let v = document.querySelector(`input[name=q${i}]:checked`);
-    data["q"+i] = v ? v.value : "";
+    if(!v){
+      alert(`❌ ${i}-savol belgilanmagan`);
+      return;
+    }
+    data["q"+i] = v.value;
   }
 
   // 36–39
   for(let i=36;i<=39;i++){
-    data["q"+i] = document.getElementById("q"+i).value;
+    let val = document.getElementById("q"+i).value.trim();
+    if(!val){
+      alert(`❌ ${i}-savol bo‘sh`);
+      return;
+    }
+    data["q"+i] = val;
   }
 
   // 40–44
   for(let i=40;i<=44;i++){
-    data["q"+i] = {
-      a: document.getElementById("q"+i+"a").value,
-      b: document.getElementById("q"+i+"b").value
+    let a = document.getElementById("q"+i+"a").value.trim();
+    let b = document.getElementById("q"+i+"b").value.trim();
+
+    if(!a || !b){
+      alert(`❌ ${i}-savol to‘liq emas`);
+      return;
     }
+
+    data["q"+i] = {a:a, b:b};
   }
 
   let esse = Number(document.getElementById("q45").value || 0);
 
+  if(esse < 0 || esse > 75){
+    alert("❌ Esse 0–75 oralig‘ida bo‘lishi kerak");
+    return;
+  }
+
   let payload = {
-    code: document.getElementById("code").value.trim(),
+    code: code,
     answers: data,
     esse: esse
   };
 
-  // 🔥 BOTGA YUBORISH
   Telegram.WebApp.sendData(JSON.stringify(payload));
-
-  // 🔥 YOPISH
   Telegram.WebApp.close();
 }
 </script>
