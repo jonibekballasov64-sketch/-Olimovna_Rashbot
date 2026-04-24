@@ -3,14 +3,11 @@ import os
 
 load_dotenv()
 
-# BOT TOKEN (.env dan olinadi)
+# BOT TOKEN
 TOKEN = os.getenv("BOT_TOKEN")
 
 # ADMIN ID
-ADMIN_ID = int(os.getenv("ADMIN_ID"))
+ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
 
-# MAJBURIY KANALLAR
-CHANNELS = [
-    "@Attestatsiya_NargizaOlimovna",
-    "@NargizaOlimovna_Onatili"
-]
+# MAJBURIY KANALLAR (.env dan olinadi)
+CHANNELS = os.getenv("CHANNELS", "").split(",")
