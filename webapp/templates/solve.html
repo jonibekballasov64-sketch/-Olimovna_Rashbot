@@ -17,16 +17,18 @@ button { padding:10px 18px; border:none; border-radius:8px; cursor:pointer; back
 
 <h2>Test ishlash</h2>
 
+<!-- 🔑 TEST KOD -->
+<div class="q">
+🔑 Test kodi:
+<input type="text" id="code">
+</div>
+
 <div id="form"></div>
 
 <button onclick="submitTest()">📤 Javob yuborish</button>
 
 <script>
 let f = document.getElementById("form");
-
-// =====================
-// FORMA CHIZISH
-// =====================
 
 // 1–32
 for(let i=1;i<=32;i++){
@@ -86,15 +88,18 @@ f.innerHTML += `
 function submitTest(){
   let data = {};
 
+  // 1–35
   for(let i=1;i<=35;i++){
     let v = document.querySelector(`input[name=q${i}]:checked`);
     data["q"+i] = v ? v.value : "";
   }
 
+  // 36–39
   for(let i=36;i<=39;i++){
     data["q"+i] = document.getElementById("q"+i).value;
   }
 
+  // 40–44
   for(let i=40;i<=44;i++){
     data["q"+i] = {
       a: document.getElementById("q"+i+"a").value,
@@ -104,17 +109,16 @@ function submitTest(){
 
   let esse = Number(document.getElementById("q45").value || 0);
 
-  // 🔥 HOZIRCHA NATIJA (keyin real tekshiruv qilamiz)
-  let result = {
-    correct: 30,
-    wrong: 14,
+  let payload = {
+    code: document.getElementById("code").value.trim(),
+    answers: data,
     esse: esse
   };
 
-  // 🔥 ENG MUHIM
-  Telegram.WebApp.sendData(JSON.stringify(result));
+  // 🔥 BOTGA YUBORISH
+  Telegram.WebApp.sendData(JSON.stringify(payload));
 
-  // 🔥 YOPADI
+  // 🔥 YOPISH
   Telegram.WebApp.close();
 }
 </script>
