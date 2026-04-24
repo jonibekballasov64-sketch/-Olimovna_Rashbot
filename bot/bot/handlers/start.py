@@ -10,12 +10,12 @@ async def start_handler(message: types.Message):
 
     if not await check_sub(message.from_user.id):
         await message.answer(
-            "🔒 Botdan foydalanish uchun kanallarga a'zo bo‘ling!",
+            "🔒 Botdan foydalanish uchun quyidagi kanallarga a'zo bo‘ling:",
             reply_markup=sub_keyboard()
         )
         return
 
     await message.answer(
-        "🎓 Milliy Sertifikat botiga xush kelibsiz!",
+        "🎓 Milliy Sertifikat botiga xush kelibsiz!\n\nKerakli bo‘limni tanlang 👇",
         reply_markup=menu_keyboard()
     )
