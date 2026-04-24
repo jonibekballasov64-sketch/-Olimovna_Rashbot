@@ -4,10 +4,19 @@ from bot.config import TOKEN
 
 bot = Bot(token=TOKEN)
 
-storage = MemoryStorage()   # 🔥 SHU QO‘SHILDI
+storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
-from bot.handlers import start, subscription, menu, test_create  # 🔥 create ham qo‘shildi
+# 🔥 HAMMA HANDLERLAR
+from bot.handlers import (
+    start,
+    subscription,
+    menu,
+    test_create,
+    test_process,
+    results,
+    finish
+)
 
 if __name__ == "__main__":
     print("Bot ishga tushdi...")
