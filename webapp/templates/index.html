@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>Test yaratish</title>
+
+<style>
+body { font-family: Arial; padding:20px; background:#f5f5f5; }
+h2 { text-align:center; }
+
+.q { background:white; padding:10px; margin:10px 0; border-radius:10px; }
+.row { margin-top:5px; }
+
+button { margin:3px; padding:5px 10px; border:none; border-radius:6px; cursor:pointer; }
+.add { background:green; color:white; }
+.remove { background:red; color:white; }
+
+input[type="text"], input[type="number"] {
+  padding:5px; margin:3px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Test yaratish</h2>
+
+<div id="form"></div>
+
+<div class="q">
+<b>45-savol (Esse 0–75):</b><br>
+<input type="number" id="q45" min="0" max="75">
+</div>
+
+<button onclick="submitTest()">✅ Test yaratish</button>
+
+<script>
+let f = document.getElementById("form");
+
+// =====================
+// 1–32 (A B C D)
+// =====================
+for(let i=1;i<=32;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol:</b>
+  <div class="row">
+    <label><input type="radio" name="q${i}" value="A"> A</label>
+    <label><input type="radio" name="q${i}" value="B"> B</label>
+    <label><input type="radio" name="q${i}" value="C"> C</label>
+    <label><input type="radio" name="q${i}" value="D"> D</label>
+  </div>
+  </div>`;
+}
+
+// =====================
+// 33–35 (A–F)
+// =====================
+for(let i=33;i<=35;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol:</b>
+  <div class="row">
+    A<input type="radio" name="q${i}" value="A">
+    B<input type="radio" name="q${i}" value="B">
+    C<input type="radio" name="q${i}" value="C">
+    D<input type="radio" name="q${i}" value="D">
+    E<input type="radio" name="q${i}" value="E">
+    F<input type="radio" name="q${i}" value="F">
+  </div>
+  </div>`;
+}
+
+// =====================
+// 36–39 (SINONIM + -)
+// =====================
+for(let i=36;i<=39;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol:</b>
+  <div id="q${i}_box"></div>
+  <button class="add" onclick="addField(${i})">+</button>
+  </div>`;
+  addField(i);
+}
+
+// =====================
+// 40–44 (A / B + -)
+// =====================
+for(let i=40;i<=44;i++){
+  f.innerHTML += `
+  <div class="q">
+  <b>${i}-savol:</b>
+
+  <div>A:</div>
+  <div id="q${i}a_box"></div>
+  <button class="add" onclick="addField('${i}a')">+</button>
+
+  <div>B:</div>
+  <div id="q${i}b_box"></div>
+  <button class="add" onclick="addField('${i}b')">+</button>
+
+  </div>`;
+
+  addField(i+"a");
+  addField(i+"b");
+}
+
+// =====================
+// FIELD QO‘SHISH
+// =====================
+function addField(id){
+  let box = document.getElementById("q"+id+"_box");
+  let div = document.createElement("div");
+
+  div.innerHTML = `
+    <input type="text">
+    <button class="remove" onclick="this.parentElement.remove()">-</button>
+  `;
+
+  box.appendChild(div);
+}
+
+// =====================
+// SUBMIT
+// =====================
+function submitTest(){
+  let data = {};
+
+  // 1–35
+  for(let i=1;i<=35;i++){
+    let v = document.querySelector(`input[name=q${i}]:checked`);
+    data["q"+i] = v ? v.value : "";
+  }
+
+  // 36–39
+  for(let i=36;i<=39;i++){
+    let vals = [];
+    document.querySelectorAll(`#q${i}_box input`).forEach(x=>{
+      if(x.value.trim()) vals.push(x.value.trim());
+    });
+    data["q"+i] = vals;
+  }
+
+  // 40–44
+  for(let i=40;i<=44;i++){
+    let a = [];
+    let b = [];
+
+    document.querySelectorAll(`#q${i}a_box input`).forEach(x=>{
+      if(x.value.trim()) a.push(x.value.trim());
+    });
+
+    document.querySelectorAll(`#q${i}b_box input`).forEach(x=>{
+      if(x.value.trim()) b.push(x.value.trim());
+    });
+
+    data["q"+i] = {a:a, b:b};
+  }
+
+  // esse
+  data["q45"] = Number(document.getElementById("q45").value || 0);
+
+  fetch("/submit", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    alert(res.text);
+  });
+}
+</script>
+
+</body>
+</html>
