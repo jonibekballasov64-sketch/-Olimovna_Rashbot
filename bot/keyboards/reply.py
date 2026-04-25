@@ -1,33 +1,33 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
 
-# 🔗 WebApp linklar
 WEBAPP_SOLVE = "https://olimovnarashbot-production.up.railway.app/solve"
 WEBAPP_CREATE = "https://olimovnarashbot-production.up.railway.app/create"
+
+ADMIN_ID = 1981059344
 
 
 def menu_keyboard(user_id: int):
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
 
-    # 📤 JAVOB YUBORISH
+    # 🔥 TO‘G‘RIDAN-TO‘G‘RI WEB APP
     kb.row(
         KeyboardButton(
-            text="📤 Javob yuborish",
+            text="✅ Javob yuborish",
             web_app=WebAppInfo(url=WEBAPP_SOLVE)
         ),
         KeyboardButton("📊 Mening natijalarim")
     )
 
-    # 👤 / ℹ️
     kb.row(
         KeyboardButton("👤 Profil"),
         KeyboardButton("ℹ️ Bot haqida")
     )
 
-    # 🔥 ADMIN (TO‘G‘RILANDI)
-    if str(user_id) == "1981059344":
+    # 🔥 ADMIN
+    if int(user_id) == int(ADMIN_ID):
         kb.row(
             KeyboardButton(
-                text="✏️ Test yaratish",
+                text="➕ Test yaratish",
                 web_app=WebAppInfo(url=WEBAPP_CREATE)
             )
         )
